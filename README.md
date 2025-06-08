@@ -54,6 +54,22 @@ genetic_uptrend_discovery/
 └── README.md
 ```
 
+## Example Usage of Technical Indicators
+
+```python
+from genetic_uptrend_discovery.src.indicators.technical import (
+    CalculateEma,
+    CalculateRsi,
+    CalculateMacd,
+)
+import pandas as pd
+
+# Assume `prices` is a pandas Series of closing prices
+ema = CalculateEma(prices, 12)
+rsi = CalculateRsi(prices)
+macd_df = CalculateMacd(prices)
+```
+
 ## Why Strong Type GP Matters for This Project
 
 In financial data analysis, mixing up data types can lead to meaningless results. For example:
