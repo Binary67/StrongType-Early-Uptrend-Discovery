@@ -31,29 +31,6 @@ Strong Type GP prevents this by ensuring:
 2. **Better Results**: Only creates mathematically valid expressions
 3. **Easier to Understand**: Generated formulas make logical sense
 
-## Project Structure
-
-```
-genetic_uptrend_discovery/
-├── data/
-│   ├── raw/                 # Raw stock data
-│   └── processed/           # Cleaned and prepared data
-├── src/
-│   ├── gp/
-│   │   ├── primitives.py    # GP building blocks
-│   │   ├── types.py         # Strong type definitions
-│   │   └── evolution.py     # Evolution engine
-│   ├── indicators/
-│   │   └── technical.py     # Technical analysis functions
-│   └── evaluation/
-│       └── fitness.py       # Fitness evaluation functions
-├── notebooks/
-│   └── analysis.ipynb       # Data exploration and results
-├── config/
-│   └── gp_config.yaml       # Evolution parameters
-└── README.md
-```
-
 ## Why Strong Type GP Matters for This Project
 
 In financial data analysis, mixing up data types can lead to meaningless results. For example:
