@@ -4,3 +4,4 @@
 3. Always search for the web when there is any code error. 
 4. Always update main.py to utilzie the updated code.
 5. You are allowed to use the secret key provided for Azure OpenAI credentials.
+6. You MUST run main.py file for final testing. 
