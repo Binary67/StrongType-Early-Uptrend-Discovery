@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import pytest
 from scripts.fetch_data import DailyOhlcvLoader, FeatureMatrixBuilder
 
 
@@ -35,3 +36,13 @@ def test_feature_builder():
     features = builder.build(df_original)
     assert "DoubleClose" in features.columns
     pd.testing.assert_series_equal(features["DoubleClose"], df_original["Close"] * 2, check_names=False)
+
+
+def test_loader_empty_download(monkeypatch):
+    def FakeDownload(*args, **kwargs):
+        return pd.DataFrame()
+
+    monkeypatch.setattr("yfinance.download", FakeDownload)
+    loader = DailyOhlcvLoader()
+    with pytest.raises(ValueError):
+        loader.load("AAPL", "2023-01-01", "2023-01-02")
