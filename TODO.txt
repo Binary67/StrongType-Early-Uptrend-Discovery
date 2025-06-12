@@ -1,145 +1,87 @@
-STRONG TYPE GENETIC PROGRAMMING FOR UPTREND PATTERN DISCOVERY
-TODO LIST - PROJECT IMPLEMENTATION TASKS
+1. [ ] **Implement Data & Feature Layer**  
+   - [ ] Create **DailyOHLCVLoader** in `scripts/fetch_data.py` (supports *yfinance* & CSV)  
+   - [ ] Add disk-cache handshake in `data/` (skip re-downloads)  
+   - [ ] Build **FeatureMatrixBuilder** to stitch price, volume & indicator arrays  
+   - [ ] Validate missing bars, split-adjustments & dtype consistency  
 
-================================================================================
-HIGH PRIORITY TASKS (CORE SYSTEM COMPONENTS)
-================================================================================
+2. [ ] **Develop Indicator Library (`Indicators/Ta.py`)**  
+   - [ ] Code EMA, RSI, ATR, BBANDS with NumPy-vectorised logic  
+   - [ ] Annotate each function with precise type hints `List[float] → float`  
+   - [ ] Unit-test against *ta-lib* reference values  
+   - [ ] Add docstrings that auto-render into docs  
 
-[ ] 1. Set up project directory structure as defined in PRD (src/, data/, notebooks/, config/)
-[ ] 2. Install and configure required dependencies (DEAP, pandas, numpy, ta-lib)
-[ ] 3. Create data management system for raw and processed financial data
-[ ] 4. Implement strong type definitions for financial data types (Price, Volume, Percentage, Boolean)
-[ ] 5. Develop GP primitives and building blocks with type constraints (arithmetic, logical, comparison ops)
-[ ] 7. Implement EMA calculation functions for uptrend detection (EMA12, EMA50)
-[ ] 8. Build fitness evaluation system for uptrend prediction accuracy
-[ ] 9. Create evolution engine with strong type constraints and genetic operators
-[ ] 10. Implement crossover and mutation operators that preserve type safety
-[ ] 14. Create pattern discovery and validation system with backtesting
-[ ] 15. Implement cross-validation framework to prevent overfitting
-[ ] 16. Build expression evaluation engine for generated patterns
+3. [ ] **Define Strongly-Typed GP Primitives (`GP/Primitives.py`)**  
+   - [ ] Register indicator nodes & protected math ops (Add, Sub, Mul, **DivSafe**)  
+   - [ ] Add boolean/comparison primitives for trading rules  
+   - [ ] Enforce return-type hierarchy & arity checks  
+   - [ ] Write doctest-style examples for every primitive  
 
-================================================================================
-MEDIUM PRIORITY TASKS (SUPPORTING FEATURES)
-================================================================================
+4. [ ] **Build GP Engine (`GP/Engine.py`)**  
+   - [ ] Configure DEAP *creator*, *toolbox*, population seeding  
+   - [ ] Plug-in tournament selection, crossover, mutation, elitism  
+   - [ ] Implement evolution loop with progress bar & checkpointing  
+   - [ ] Allow early-stopping on fitness stagnation  
 
-[ ] 6. Create technical indicators library with type safety (EMA, SMA, RSI, MACD, Bollinger Bands)
-[ ] 11. Create configuration system with evolution parameters (population size, generations, mutation rate)
-[ ] 12. Develop data preprocessing pipeline (cleaning, normalization, feature engineering)
-[ ] 13. Implement data validation and integrity checks
-[ ] 17. Create analysis notebook for data exploration and visualization
-[ ] 18. Implement results interpretation and reporting system
-[ ] 19. Add pattern performance metrics (accuracy, precision, recall, Sharpe ratio)
-[ ] 20. Create logging and monitoring system for evolution process
-[ ] 21. Implement unit tests for all core components
-[ ] 22. Create integration tests for end-to-end pattern discovery
+5. [ ] **Implement Fitness Scorer (`GP/Scoring.py`)**  
+   - [ ] Detect EMA-12/EMA-50 crossovers & compute **Lead/Confirm** days  
+   - [ ] Wrap *backtesting.py* to get equity curve, Sharpe & ReturnPct  
+   - [ ] Combine sub-scores per YAML weights; apply parsimony penalty  
+   - [ ] Sanity-check with hand-rolled rule examples  
 
-================================================================================
-LOW PRIORITY TASKS (ENHANCEMENTS & OPTIMIZATIONS)
-================================================================================
+6. [ ] **Create Backtesting Wrapper (`Backtest/`)**  
+   - [ ] Thin adapter forwarding price series, position sizes & fees  
+   - [ ] Return per-trade log + aggregate stats dict  
+   - [ ] Add fail-fast for non-vectorisable rule outputs  
+   - [ ] Compare results against simple buy-&-hold baseline  
 
-[ ] 23. Add data loading utilities for multiple financial data formats
-[ ] 24. Implement parallel processing for evolution speedup
-[ ] 25. Create pattern visualization tools
-[ ] 26. Add real-time pattern monitoring capabilities
-[ ] 27. Implement multi-timeframe pattern analysis
-[ ] 28. Create comprehensive documentation and API reference
-[ ] 29. Add example datasets and usage tutorials
-[ ] 30. Implement performance benchmarking against traditional methods
+7. [ ] **Integrate Walk-Forward Pipeline**  
+   - [ ] Build sliding **TrainWindow/TestWindow** splitter (uses pandas offsets)  
+   - [ ] Automate sequential retraining & OOS evaluation loops  
+   - [ ] Aggregate fold-level metrics & write CSV summary  
+   - [ ] Ensure time-order is preserved (no peeking)  
 
-================================================================================
-TASK BREAKDOWN BY DEVELOPMENT PHASE
-================================================================================
+8. [ ] **Orchestrate Experiment Runner (`main.py`)**  
+   - [ ] Kick off data load ► GP training ► walk-forward tests  
+   - [ ] Save `BestIndividual.pkl` plus pickled config & metrics under `runs/`  
+   - [ ] Exit with non-zero code on failed fitness threshold  
 
-PHASE 1: FOUNDATION (Tasks 1-5)
-- Project setup and infrastructure
-- Core type system implementation
-- Basic GP framework
+9. [ ] **Develop Inference Module**  
+   - [ ] Load best rule & requisite indicator state from disk  
+   - [ ] Evaluate on the latest daily bar and emit “Uptrend Imminent?” flag  
+   - [ ] Provide CLI demo: `python infer.py --ticker BTC-USD`  
+   - [ ] Document real-time usage caveats (data latency, survivorship)  
 
-PHASE 2: CORE FUNCTIONALITY (Tasks 6-16)
-- Technical indicators and EMA calculations
-- Fitness evaluation and evolution engine
-- Pattern discovery and validation
+10. [ ] **Visualization Utilities**  
+    - [ ] `scripts/plot_equity.py`: equity curve, drawdown & benchmark overlay  
+    - [ ] Rule-fire timeline chart: signal dots vs price candles  
+    - [ ] Auto-save PNGs into each run folder  
+    - [ ] Optional notebook showcasing one full evolution  
 
-PHASE 3: TESTING & ANALYSIS (Tasks 17-22)
-- Analysis tools and reporting
-- Performance metrics and monitoring
-- Comprehensive testing framework
+11. [ ] **Logging & Experiment Management**  
+    - [ ] Structured logging via Python `logging` (file + stdout handlers)  
+    - [ ] Auto-create `runs/YYYY-MM-DD_HHMM/` with symlink `latest` pointer  
+    - [ ] Persist Hall-of-Fame rules, fitness trajectory CSV & hyper-params JSON  
+    - [ ] Provide utility to compare multiple runs side-by-side  
 
-PHASE 4: ENHANCEMENTS (Tasks 23-30)
-- Advanced features and optimizations
-- Documentation and tutorials
-- Performance benchmarking
+12. [ ] **Extensibility Framework**  
+    - [ ] Helper to auto-register new indicators via YAML config alone  
+    - [ ] Validate type compatibility & raise clear errors on mismatch  
+    - [ ] Ship template “Hello-World Indicator” example  
+    - [ ] Update README *Extending the Indicator Set* section with code snippets  
 
-================================================================================
-DEPENDENCIES AND PREREQUISITES
-================================================================================
+13. [ ] **Comprehensive Unit Tests (`UnitTests/`)**  
+    - [ ] Data loader & feature builder edge-cases (missing days, NaNs)  
+    - [ ] Indicator function accuracy within tolerance vs reference  
+    - [ ] GP primitives type-checking & protected op safety  
+    - [ ] Walk-forward splitter & fitness scorer logic paths  
 
-Key Dependencies:
-- DEAP (Distributed Evolutionary Algorithms in Python)
-- pandas (Data manipulation and analysis)
-- numpy (Numerical computing)
-- ta-lib (Technical Analysis Library)
-- matplotlib/plotly (Visualization)
-- pytest (Testing framework)
-- PyYAML (Configuration management)
+14. [ ] **Performance Optimizations**  
+    - [ ] Vectorise heavy loops in scoring & backtesting  
+    - [ ] Parallelise fitness evaluation with *multiprocessing* map  
+    - [ ] Profile memory; cache indicator arrays per fold  
+    - [ ] Benchmark total runtime across 1/5/10 tickers  
 
-Critical Path:
-Tasks 1-5 must be completed before any other tasks
-Tasks 8-10 depend on completion of tasks 4-5
-Tasks 14-16 depend on completion of tasks 8-10
-Testing tasks (21-22) should run parallel to feature development
-
-================================================================================
-ESTIMATED EFFORT (STORY POINTS)
-================================================================================
-
-HIGH PRIORITY: 120 story points (approximately 6-8 weeks)
-MEDIUM PRIORITY: 80 story points (approximately 4-5 weeks)  
-LOW PRIORITY: 60 story points (approximately 3-4 weeks)
-
-TOTAL PROJECT: 260 story points (approximately 13-17 weeks)
-
-================================================================================
-SUCCESS CRITERIA FOR EACH PHASE
-================================================================================
-
-PHASE 1 COMPLETION:
-- Project structure matches PRD specifications
-- Strong type system prevents invalid expressions
-- Basic GP primitives are functional
-
-PHASE 2 COMPLETION:
-- System can evolve uptrend prediction patterns
-- EMA-based uptrend detection is working
-- Fitness evaluation produces meaningful scores
-
-PHASE 3 COMPLETION:
-- Comprehensive test coverage (>80%)
-- Analysis tools provide actionable insights
-- Performance monitoring is operational
-
-PHASE 4 COMPLETION:
-- All enhancement features are implemented
-- Documentation is complete and usable
-- Performance meets or exceeds baseline methods
-
-================================================================================
-NOTES AND CONSIDERATIONS
-================================================================================
-
-- Follow Pascal Case naming convention as specified in CLAUDE.md
-- Use specified Python interpreter: /home/frank/Projects/Projects/Genetic-Prompt-Evolution/.venv/bin/python3
-- Write and run tests for every code update
-- Focus on type safety throughout implementation
-- Prioritize interpretability of generated patterns
-- Ensure mathematical validity of all financial calculations
-- Plan for extensibility in technical indicators
-- Consider memory efficiency for large datasets
-- Implement proper error handling and logging
-- Document design decisions and trade-offs
-
-================================================================================
-LAST UPDATED: 2025-01-06
-STATUS: PLANNING PHASE
-CURRENT FOCUS: Project setup and foundation tasks
-================================================================================
+15. [ ] **Documentation Polish**  
+    - [ ] Flesh out “Quick Start” with real commands & expected output  
+    - [ ] Inline docstrings for every public API; lint with `pydocstyle`  
+    - [ ] Maintain `CHANGELOG.md` for semantic versioning
