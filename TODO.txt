@@ -1,8 +1,8 @@
-1. [ ] **Implement Data & Feature Layer**  
-   - [ ] Create **DailyOHLCVLoader** in `scripts/fetch_data.py` (supports *yfinance* & CSV)  
-   - [ ] Add disk-cache handshake in `data/` (skip re-downloads)  
-   - [ ] Build **FeatureMatrixBuilder** to stitch price, volume & indicator arrays  
-   - [ ] Validate missing bars, split-adjustments & dtype consistency  
+1. [x] **Implement Data & Feature Layer**
+   - [x] Create **DailyOHLCVLoader** in `scripts/fetch_data.py` (supports *yfinance* & CSV)
+   - [x] Add disk-cache handshake in `data/` (skip re-downloads)
+   - [x] Build **FeatureMatrixBuilder** to stitch price, volume & indicator arrays
+   - [x] Validate missing bars, split-adjustments & dtype consistency
 
 2. [ ] **Develop Indicator Library (`Indicators/Ta.py`)**  
    - [ ] Code EMA, RSI, ATR, BBANDS with NumPy-vectorised logic  
