@@ -1,6 +1,11 @@
-import pandas_ta as ta
 import numpy as np
+import pandas as pd
+
 np.NaN = np.nan  # type: ignore[attr-defined]
+
+def _CalculateEma(Series: pd.Series, Length: int) -> pd.Series:
+    """Return the exponential moving average."""
+    return Series.ewm(span=Length, adjust=False).mean()
 class DataLabel:
     def __init__(self, DataFrame):
         """
@@ -23,8 +28,8 @@ class DataLabel:
             pd.DataFrame: DataFrame with added 'EMA12', 'EMA50', 'Uptrend', and 'Label' columns
         """
         # Calculate EMA 12 and EMA 50
-        self.DataFrame['EMA12'] = ta.ema(self.DataFrame['Close'], length=12)
-        self.DataFrame['EMA50'] = ta.ema(self.DataFrame['Close'], length=50)
+        self.DataFrame['EMA12'] = _CalculateEma(self.DataFrame['Close'], 12)
+        self.DataFrame['EMA50'] = _CalculateEma(self.DataFrame['Close'], 50)
         
         # Label current uptrend where EMA 12 > EMA 50
         self.DataFrame['Uptrend'] = (self.DataFrame['EMA12'] > self.DataFrame['EMA50']).astype(int)
