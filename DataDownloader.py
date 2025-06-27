@@ -1,9 +1,15 @@
-import yfinance as yf
 import pandas as pd
+import yfinance as yf
+from ConfigManager import ConfigManager
 
 class YFinanceDownloader:
-    def __init__(self, Ticker, StartDate, EndDate, Interval):
-        self.Ticker = Ticker
+    """Download OHLCV data from yfinance based on configuration."""
+
+    def __init__(self, StartDate: str, EndDate: str, Interval: str,
+                 ConfigPath: str = "Config.yaml") -> None:
+        Config = ConfigManager(ConfigPath)
+        ConfigData = Config.LoadConfig()
+        self.Ticker = ConfigData.get("Ticker", "AAPL")
         self.StartDate = pd.to_datetime(StartDate)
         self.EndDate = pd.to_datetime(EndDate)
         self.Interval = Interval
