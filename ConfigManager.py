@@ -6,7 +6,7 @@ from typing import Any, Dict
 class ConfigManager:
     """Handle reading and writing YAML configuration files."""
 
-    def __init__(self, ConfigPath: str = "config.yaml") -> None:
+    def __init__(self, ConfigPath: str = "Config.yaml") -> None:
         self.ConfigPath = ConfigPath
         if not os.path.isfile(self.ConfigPath):
             with open(self.ConfigPath, "w", encoding="utf-8") as File:
