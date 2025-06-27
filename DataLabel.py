@@ -1,9 +1,6 @@
-import pandas as pd
-import numpy as np
-np.NaN = np.nan
 import pandas_ta as ta
-
-
+import numpy as np
+np.NaN = np.nan  # type: ignore[attr-defined]
 class DataLabel:
     def __init__(self, DataFrame):
         """
