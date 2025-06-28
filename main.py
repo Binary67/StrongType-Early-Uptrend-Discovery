@@ -3,6 +3,7 @@ from ConfigManager import ConfigManager
 from LoggerSetup import LoggerSetup
 from DataDownloader import YFinanceDownloader
 from DataLabel import DataLabel
+from DataPreprocessor import DataPreprocessor
 
 
 def main() -> None:
@@ -24,6 +25,13 @@ def main() -> None:
         "Downloaded %d rows for ticker %s",
         len(Data),
         Downloader.Ticker,
+    )
+
+    Preprocessor = DataPreprocessor()
+    Data = Preprocessor.ResampleTimeSeries(Data, "1D")
+    Data = Preprocessor.HandleMissingValues(Data, "ffill")
+    TrainDf, ValidationDf, TestDf = Preprocessor.SplitTrainTestSets(
+        Data, 0.7, 0.15
     )
 
     Labeler = DataLabel(Data)
