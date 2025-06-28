@@ -1,5 +1,6 @@
 from DataDownloader import DataDownloader
 from LogManager import LogManager
+from ConfigManager import ConfigManager
 
 
 def SetupLogging() -> LogManager:
@@ -9,8 +10,15 @@ def SetupLogging() -> LogManager:
 
 def Main() -> None:
     SetupLogging()
+    Config = ConfigManager()
+    Params = Config.GetParams()
     Downloader = DataDownloader()
-    Data = Downloader.DownloadData("AAPL", "2024-01-01", "2024-01-31", "1d")
+    Data = Downloader.DownloadData(
+        Params["TickerSymbol"],
+        Params["StartDate"],
+        Params["EndDate"],
+        Params["Interval"],
+    )
     print(Data.head())
 
 
