@@ -11,6 +11,7 @@ from StrongTypeRegistry import StrongTypeRegistry
 from IndicatorFactory import IndicatorFactory
 from GpPrimitiveSetBuilder import GpPrimitiveSetBuilder
 from PopulationInitializer import PopulationInitializer
+from GeneticOperatorSuite import GeneticOperatorSuite
 
 
 def main() -> None:
@@ -111,7 +112,26 @@ def main() -> None:
         Population,
         ["SMA(Prices, Len)"],
     )
-    Logger.info("Generated initial population of %d individuals", len(Population))
+
+    OperatorSuite = GeneticOperatorSuite(PrimitiveSet)
+    Child1, Child2 = OperatorSuite.TypedCrossover(Population[0], Population[0], 3)
+    Mutant = OperatorSuite.TypedMutation(Population[0], 0.5)
+    Winner = OperatorSuite.TournamentSelection(Population, 2)
+    Elites = OperatorSuite.ElitismSelection(Population, 1)
+    Population = OperatorSuite.ReplacePopulation([Child1, Child2, Mutant], Elites, 2)
+    OperatorSuite.AdaptiveOperatorProbabilities(
+        {
+            "CrossoverSuccess": 1,
+            "CrossoverTrials": 2,
+            "MutationSuccess": 1,
+            "MutationTrials": 2,
+        }
+    )
+    Logger.info(
+        "Generated initial population of %d individuals; winner fitness %.2f",
+        len(Population),
+        getattr(Winner.fitness, "values", (0.0,))[0],
+    )
 
 
 if __name__ == "__main__":
