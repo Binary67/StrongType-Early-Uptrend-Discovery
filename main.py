@@ -12,6 +12,7 @@ from IndicatorFactory import IndicatorFactory
 from GpPrimitiveSetBuilder import GpPrimitiveSetBuilder
 from PopulationInitializer import PopulationInitializer
 from GeneticOperatorSuite import GeneticOperatorSuite
+from GeneticProgrammingEngine import GeneticProgrammingEngine
 
 
 def main() -> None:
@@ -132,6 +133,9 @@ def main() -> None:
         len(Population),
         getattr(Winner.fitness, "values", (0.0,))[0],
     )
+
+    Engine = GeneticProgrammingEngine(PrimitiveSet, OperatorSuite, lambda _tree: 0.0)
+    Engine.RunEvolution(Population, 1, [])
 
 
 if __name__ == "__main__":
