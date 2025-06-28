@@ -1,5 +1,4 @@
 import logging
-from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 import pandas as pd
@@ -13,14 +12,6 @@ class DataDownloader:
         self.CacheDir = Path(CacheDir)
         self.CacheDir.mkdir(parents=True, exist_ok=True)
         self.Logger = logging.getLogger(self.__class__.__name__)
-        if not self.Logger.handlers:
-            LogsPath = Path("Logs")
-            LogsPath.mkdir(exist_ok=True)
-            Handler = RotatingFileHandler(LogsPath / "data_downloader.log", maxBytes=1000000, backupCount=3)
-            Formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-            Handler.setFormatter(Formatter)
-            self.Logger.addHandler(Handler)
-            self.Logger.setLevel(logging.INFO)
 
     def _GetCacheFilePath(self, TickerSymbol: str, StartDate: str, EndDate: str, Interval: str) -> Path:
         FileName = f"{TickerSymbol}_{StartDate}_{EndDate}_{Interval}.csv"
