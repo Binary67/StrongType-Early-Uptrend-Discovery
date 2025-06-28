@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 from ConfigManager import ConfigManager
 import pandas as pd
 from LoggerSetup import LoggerSetup
@@ -7,6 +9,7 @@ from DataLabel import DataLabel
 from DataPreprocessor import DataPreprocessor
 from StrongTypeRegistry import StrongTypeRegistry
 from IndicatorFactory import IndicatorFactory
+from GpPrimitiveSetBuilder import GpPrimitiveSetBuilder
 
 
 def main() -> None:
@@ -84,6 +87,16 @@ def main() -> None:
     )
     Example = Factory.ComputeIndicator("SMA", ([1.0, 2.0, 3.0, 4.0], 2))
     Logger.info("Example SMA calculation: %.2f", Example)
+
+    Builder = GpPrimitiveSetBuilder()
+    PrimitiveSet = Builder.BuildPrimitiveSet(Factory, Registry)
+    Builder.AddTerminalNodes(
+        PrimitiveSet,
+        {"Prices": ([1.0, 2.0, 3.0], "PriceSeries")},
+    )
+    Builder.ValidatePrimitiveSet(PrimitiveSet)
+    ExportPath = Builder.ExportPrimitiveSet(PrimitiveSet, Path("Primitives"))
+    Logger.info("Primitive set exported to %s", ExportPath)
 
 
 if __name__ == "__main__":
