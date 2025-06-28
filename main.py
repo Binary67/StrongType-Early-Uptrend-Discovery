@@ -6,6 +6,7 @@ from DataDownloader import YFinanceDownloader
 from DataLabel import DataLabel
 from DataPreprocessor import DataPreprocessor
 from StrongTypeRegistry import StrongTypeRegistry
+from IndicatorFactory import IndicatorFactory
 
 
 def main() -> None:
@@ -62,10 +63,27 @@ def main() -> None:
         list,
         lambda x: all(isinstance(v, (int, float)) for v in x),
     )
+    Registry.RegisterType(
+        "WindowLength", int, lambda x: isinstance(x, int) and x > 0
+    )
     Registry._compatibility["PriceSeries"] = {"PriceSeries", "Scalar"}
     Registry.ValidateTypeCompatibility("PriceSeries", "Scalar")
     Registry.EnforceTypeOnArgument(1.0, "Scalar")
     Logger.info("Registered types: %s", Registry.ListRegisteredTypes())
+
+    Factory = IndicatorFactory(Registry)
+
+    def _SimpleMovingAverage(Series: list[float], Length: int) -> float:
+        return sum(Series[-Length:]) / Length
+
+    Factory.RegisterIndicatorFunction(
+        "SMA",
+        _SimpleMovingAverage,
+        ("PriceSeries", "WindowLength"),
+        "Scalar",
+    )
+    Example = Factory.ComputeIndicator("SMA", ([1.0, 2.0, 3.0, 4.0], 2))
+    Logger.info("Example SMA calculation: %.2f", Example)
 
 
 if __name__ == "__main__":
