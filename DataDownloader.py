@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import yfinance as yf
 from ConfigManager import ConfigManager
@@ -59,6 +60,31 @@ class YFinanceDownloader:
         if isinstance(FinalDf.columns, pd.MultiIndex):
             FinalDf.columns = FinalDf.columns.droplevel(1)
 
-        FinalDf.columns.name = None 
+        FinalDf.columns.name = None
 
         return FinalDf
+
+    def DownloadWithCache(self, CacheDirectory: str = "Cache"):
+        """Return data from cache or download and cache it.
+
+        Args:
+            CacheDirectory: Directory to store cached CSV files.
+
+        Returns:
+            pd.DataFrame: The OHLCV data.
+        """
+        os.makedirs(CacheDirectory, exist_ok=True)
+        FileName = (
+            f"{self.Ticker}_"
+            f"{self.StartDate.strftime('%Y%m%d')}_"
+            f"{self.EndDate.strftime('%Y%m%d')}_"
+            f"{self.Interval}.csv"
+        )
+        CachePath = os.path.join(CacheDirectory, FileName)
+        if os.path.isfile(CachePath):
+            Data = pd.read_csv(CachePath, index_col=0, parse_dates=True)
+            return Data
+
+        Data = self.DownloadData()
+        Data.to_csv(CachePath)
+        return Data

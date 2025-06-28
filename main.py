@@ -19,7 +19,7 @@ def main() -> None:
         EndDate="2020-12-31",
         Interval="1d",
     )
-    Data = Downloader.DownloadData()
+    Data = Downloader.DownloadWithCache()
     Logger.info(
         "Downloaded %d rows for ticker %s",
         len(Data),
