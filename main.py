@@ -10,6 +10,7 @@ from DataPreprocessor import DataPreprocessor
 from StrongTypeRegistry import StrongTypeRegistry
 from IndicatorFactory import IndicatorFactory
 from GpPrimitiveSetBuilder import GpPrimitiveSetBuilder
+from PopulationInitializer import PopulationInitializer
 
 
 def main() -> None:
@@ -92,11 +93,25 @@ def main() -> None:
     PrimitiveSet = Builder.BuildPrimitiveSet(Factory, Registry)
     Builder.AddTerminalNodes(
         PrimitiveSet,
-        {"Prices": ([1.0, 2.0, 3.0], "PriceSeries")},
+        {
+            "Prices": ([1.0, 2.0, 3.0], "PriceSeries"),
+            "Len": (2, "WindowLength"),
+        },
     )
     Builder.ValidatePrimitiveSet(PrimitiveSet)
     ExportPath = Builder.ExportPrimitiveSet(PrimitiveSet, Path("Primitives"))
     Logger.info("Primitive set exported to %s", ExportPath)
+
+    Initializer = PopulationInitializer(Registry)
+    Population = Initializer.GenerateInitialPopulation(PrimitiveSet, 2, 2)
+    Population = Initializer.EnforceStrongTypingOnPopulation(Population)
+    Initializer.EvaluateInitialFitness(Population, lambda _tree: 0.0)
+    Population = Initializer.DeduplicateIndividuals(Population)
+    Population = Initializer.SeedPopulationWithKnownStrategies(
+        Population,
+        ["SMA(Prices, Len)"],
+    )
+    Logger.info("Generated initial population of %d individuals", len(Population))
 
 
 if __name__ == "__main__":
