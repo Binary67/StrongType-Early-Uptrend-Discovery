@@ -1,6 +1,7 @@
 from DataDownloader import DataDownloader
 from LogManager import LogManager
 from ConfigManager import ConfigManager
+from Indicator import Indicator
 
 
 def SetupLogging() -> LogManager:
@@ -13,13 +14,16 @@ def Main() -> None:
     Config = ConfigManager()
     Params = Config.GetParams()
     Downloader = DataDownloader()
+    Technicals = Indicator()
     Data = Downloader.DownloadData(
         Params["TickerSymbol"],
         Params["StartDate"],
         Params["EndDate"],
         Params["Interval"],
     )
-    print(Data.head())
+    Close = Data["Close"]
+    Ema12 = Technicals.EMA(Close, 12)
+    print(Ema12.tail())
 
 
 if __name__ == "__main__":
