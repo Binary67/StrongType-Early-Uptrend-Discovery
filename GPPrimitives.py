@@ -189,8 +189,9 @@ class GPPrimitives:
         self.PrimitiveSet.addEphemeralConstant(
             "RandScalar", lambda: Scalar(random.uniform(-1.0, 1.0)), Scalar
         )
-        # Window length terminal example
-        self.PrimitiveSet.addTerminal(WindowLength(5), WindowLength)
+        self.PrimitiveSet.addEphemeralConstant(
+            "RandWindow", lambda: WindowLength(random.randint(2, 50)), WindowLength
+        )
         # Placeholder indicator series terminal for tree generation
         self.PrimitiveSet.addTerminal(
             IndicatorSeries(pd.Series([0.0])),
