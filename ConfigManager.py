@@ -17,6 +17,8 @@ class ConfigManager:
             "StartDate": "2024-01-01",
             "EndDate": "2024-01-31",
             "Interval": "1d",
+            "PopulationSize": 10,
+            "MaxDepth": 3,
         }
         self.ConfigFile.write_text(yaml.safe_dump(DefaultParams))
 

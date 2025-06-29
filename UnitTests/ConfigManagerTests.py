@@ -12,6 +12,8 @@ def test_create_and_update_config(tmp_path) -> None:
     assert ConfigPath.exists()
     Params = Manager.GetParams()
     assert Params["TickerSymbol"] == "AAPL"
+    assert Params["PopulationSize"] == 10
+    assert Params["MaxDepth"] == 3
     Manager.UpdateParams(TickerSymbol="MSFT")
     ParamsUpdated = Manager.GetParams()
     assert ParamsUpdated["TickerSymbol"] == "MSFT"

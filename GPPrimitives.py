@@ -51,6 +51,16 @@ class GPPrimitives:
         return Value.Values
 
     @staticmethod
+    def IdentityPrice(Price: PriceSeries) -> PriceSeries:
+        """Return the price series unchanged."""
+        return Price
+
+    @staticmethod
+    def IdentityLength(Length: WindowLength) -> WindowLength:
+        """Return the window length unchanged."""
+        return Length
+
+    @staticmethod
     def AddScalar(A: Scalar, B: Scalar) -> Scalar:
         return Scalar(A.Value + B.Value)
 
@@ -149,6 +159,9 @@ class GPPrimitives:
         P.addPrimitive(self.SafeDivSeriesScalar, [IndicatorSeries, Scalar], IndicatorSeries)
         P.addPrimitive(self.SafeDivScalarSeries, [Scalar, IndicatorSeries], IndicatorSeries)
         P.addPrimitive(self.SafeDivScalar, [Scalar, Scalar], Scalar)
+        # Price series identity
+        P.addPrimitive(self.IdentityPrice, [PriceSeries], PriceSeries)
+        P.addPrimitive(self.IdentityLength, [WindowLength], WindowLength)
 
     def _RegisterIndicators(self) -> None:
         P = self.PrimitiveSet
@@ -161,6 +174,11 @@ class GPPrimitives:
         )
         # Window length terminal example
         self.PrimitiveSet.addTerminal(WindowLength(5), WindowLength)
+        # Placeholder indicator series terminal for tree generation
+        self.PrimitiveSet.addTerminal(
+            IndicatorSeries(pd.Series([0.0])),
+            IndicatorSeries,
+        )
 
     def GetPrimitiveSet(self) -> gp.PrimitiveSetTyped:
         return self.PrimitiveSet
