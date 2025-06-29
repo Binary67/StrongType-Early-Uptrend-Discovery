@@ -2,7 +2,7 @@ from DataDownloader import DataDownloader
 from LogManager import LogManager
 from ConfigManager import ConfigManager
 from Indicator import Indicator
-from GPPrimitives import GPPrimitives, WindowLength
+from GPPrimitives import GPPrimitives, WindowLength, PriceSeries
 from GPPopulation import GPPopulation
 from DataLabel import DataLabel
 import logging
@@ -31,6 +31,11 @@ def Main() -> None:
         Params["Interval"],
     )
     Data = Labeler.AddLabel(Data)
+    PriceSeriesObj = PriceSeries(Data["Close"])
+    PriceIndicator = Primitives.PriceToIndicator(PriceSeriesObj)
+    logging.getLogger(__name__).info(
+        "PriceToIndicator sample: %s", PriceIndicator.Values.head().tolist()
+    )
     # Build primitive set to ensure all primitives are registered
     Pset = Primitives.GetPrimitiveSet()
     SampleWindow = Pset.terminals[WindowLength][0]().value.Value

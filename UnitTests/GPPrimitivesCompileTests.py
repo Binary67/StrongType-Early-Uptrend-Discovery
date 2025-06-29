@@ -20,3 +20,16 @@ def test_compile_indicator_terminal() -> None:
     evaluator = EvaluateFitness(Data, Prims)
     fitness = evaluator.ComputeFitness(tree)
     assert 0.0 <= fitness <= 1.0
+
+
+def test_compile_price_to_indicator() -> None:
+    Data = pd.DataFrame({"Close": [1, 2, 3], "Label": [0, 1, 0]})
+    Prims = GPPrimitives()
+    tree = gp.PrimitiveTree.from_string(
+        "PriceToIndicator(ClosePrice)", pset=Prims.PrimitiveSet
+    )
+    func = gp.compile(expr=tree, pset=Prims.PrimitiveSet)
+    assert func is not None
+    evaluator = EvaluateFitness(Data, Prims)
+    fitness = evaluator.ComputeFitness(tree)
+    assert 0.0 <= fitness <= 1.0

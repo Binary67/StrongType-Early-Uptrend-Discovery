@@ -4,7 +4,13 @@ import pandas as pd
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from GPPrimitives import GPPrimitives, IndicatorSeries, Scalar, WindowLength
+from GPPrimitives import (
+    GPPrimitives,
+    IndicatorSeries,
+    PriceSeries,
+    Scalar,
+    WindowLength,
+)
 
 
 def test_add_series_and_scalar() -> None:
@@ -25,6 +31,22 @@ def test_primitive_set_contains_ema() -> None:
         Prim.name == "EMA" for Prim in Prims.PrimitiveSet.primitives[IndicatorSeries]
     )
     assert HasEma
+
+
+def test_price_to_indicator() -> None:
+    Prices = pd.Series([10, 20, 30])
+    Series = PriceSeries(Prices)
+    Prims = GPPrimitives()
+    Result = Prims.PriceToIndicator(Series)
+    pd.testing.assert_series_equal(Result.Values, Prices)
+
+
+def test_primitive_set_contains_price_to_indicator() -> None:
+    Prims = GPPrimitives()
+    HasPrim = any(
+        Prim.name == "PriceToIndicator" for Prim in Prims.PrimitiveSet.primitives[IndicatorSeries]
+    )
+    assert HasPrim
 
 
 def test_rand_window_ephemeral_range() -> None:

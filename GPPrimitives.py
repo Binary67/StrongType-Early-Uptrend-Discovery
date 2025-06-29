@@ -154,6 +154,11 @@ class GPPrimitives:
         Result = self.IndicatorLib.SMA(Price.Values, Length.Value)
         return IndicatorSeries(Result)
 
+    @staticmethod
+    def PriceToIndicator(Price: PriceSeries) -> IndicatorSeries:
+        """Convert ``PriceSeries`` to ``IndicatorSeries`` without modification."""
+        return IndicatorSeries(Price.Values)
+
     def _RegisterOperators(self) -> None:
         P = self.PrimitiveSet
         # Addition
@@ -184,6 +189,7 @@ class GPPrimitives:
         P = self.PrimitiveSet
         P.addPrimitive(self._WrapEma, [PriceSeries, WindowLength], IndicatorSeries, name="EMA")
         P.addPrimitive(self._WrapSma, [PriceSeries, WindowLength], IndicatorSeries, name="SMA")
+        P.addPrimitive(self.PriceToIndicator, [PriceSeries], IndicatorSeries, name="PriceToIndicator")
 
     def _RegisterTerminals(self) -> None:
         self.PrimitiveSet.addEphemeralConstant(
