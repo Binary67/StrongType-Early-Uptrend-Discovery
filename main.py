@@ -28,7 +28,7 @@ def Main() -> None:
         Params["EndDate"],
         Params["Interval"],
     )
-    Labeler.AddLabel(Data)
+    Data = Labeler.AddLabel(Data)
     # Build primitive set to ensure all primitives are registered
     Pset = Primitives.GetPrimitiveSet()
     logging.getLogger(__name__).info(
