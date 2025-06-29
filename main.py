@@ -7,6 +7,7 @@ from GPPopulation import GPPopulation
 from DataLabel import DataLabel
 import logging
 
+from EvaluateFitness import EvaluateFitness
 
 def SetupLogging() -> LogManager:
     """Initialize logging using :class:`LogManager`."""
@@ -35,7 +36,11 @@ def Main() -> None:
         "Primitive set ready with %d primitives",
         sum(len(V) for V in Pset.primitives.values()),
     )
-    PopulationGen.Generate()
+    Evaluator = EvaluateFitness(Data, Primitives)
+    Population = PopulationGen.Generate()
+    for Formula in Population:
+        Score = Evaluator.ComputeFitness(Formula)
+        logging.getLogger(__name__).info("Formula %s fitness %.4f", Formula, Score)
 
 
 if __name__ == "__main__":
