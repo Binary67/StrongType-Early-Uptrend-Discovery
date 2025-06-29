@@ -2,7 +2,7 @@ from DataDownloader import DataDownloader
 from LogManager import LogManager
 from ConfigManager import ConfigManager
 from Indicator import Indicator
-from GPPrimitives import GPPrimitives
+from GPPrimitives import GPPrimitives, WindowLength
 from GPPopulation import GPPopulation
 from DataLabel import DataLabel
 import logging
@@ -33,6 +33,10 @@ def Main() -> None:
     Data = Labeler.AddLabel(Data)
     # Build primitive set to ensure all primitives are registered
     Pset = Primitives.GetPrimitiveSet()
+    SampleWindow = Pset.terminals[WindowLength][0]().value.Value
+    logging.getLogger(__name__).info(
+        "Sample RandWindow length: %d", SampleWindow
+    )
     logging.getLogger(__name__).info(
         "Primitive set ready with %d primitives",
         sum(len(V) for V in Pset.primitives.values()),

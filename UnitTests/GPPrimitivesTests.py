@@ -4,7 +4,7 @@ import pandas as pd
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from GPPrimitives import GPPrimitives, IndicatorSeries, Scalar
+from GPPrimitives import GPPrimitives, IndicatorSeries, Scalar, WindowLength
 
 
 def test_add_series_and_scalar() -> None:
@@ -25,4 +25,11 @@ def test_primitive_set_contains_ema() -> None:
         Prim.name == "EMA" for Prim in Prims.PrimitiveSet.primitives[IndicatorSeries]
     )
     assert HasEma
+
+
+def test_rand_window_ephemeral_range() -> None:
+    Prims = GPPrimitives()
+    Terminal = Prims.PrimitiveSet.terminals[WindowLength][0]
+    SampleLen = Terminal().value.Value
+    assert 2 <= SampleLen <= 50
 
