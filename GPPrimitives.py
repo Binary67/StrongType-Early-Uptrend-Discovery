@@ -12,10 +12,18 @@ from Indicator import Indicator
 class PriceSeries:
     Values: pd.Series
 
+    def __repr__(self) -> str:
+        ValuesList = self.Values.tolist()
+        return f"PriceSeries(pd.Series({ValuesList}))"
+
 
 @dataclass
 class IndicatorSeries:
     Values: pd.Series
+
+    def __repr__(self) -> str:
+        ValuesList = self.Values.tolist()
+        return f"IndicatorSeries(pd.Series({ValuesList}))"
 
 
 @dataclass
@@ -38,6 +46,15 @@ class GPPrimitives:
             "MAIN", [PriceSeries], IndicatorSeries
         )
         self.PrimitiveSet.renameArguments(ARG0="ClosePrice")
+        self.PrimitiveSet.context.update(
+            {
+                "pd": pd,
+                "IndicatorSeries": IndicatorSeries,
+                "PriceSeries": PriceSeries,
+                "WindowLength": WindowLength,
+                "Scalar": Scalar,
+            }
+        )
         self._RegisterOperators()
         self._RegisterIndicators()
         self._RegisterTerminals()

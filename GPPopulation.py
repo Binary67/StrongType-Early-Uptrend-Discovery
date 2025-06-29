@@ -28,6 +28,4 @@ class GPPopulation:
             )
             for _ in range(self.PopulationSize)
         ]
-        for Formula in self.Population[: min(5, len(self.Population))]:
-            self.Logger.info("Generated formula: %s", Formula)
         return self.Population
