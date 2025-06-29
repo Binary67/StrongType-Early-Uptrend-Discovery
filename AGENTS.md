@@ -50,7 +50,6 @@
 - ✅ All unit tests pass.  
 - ✅ `main.py` runs without error.  
 - ✅ No plaintext secrets or log files committed.  
-- ✅ PR title format: `[project_name] <concise description>`.
 
 ---
 
